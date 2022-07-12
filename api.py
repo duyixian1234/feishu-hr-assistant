@@ -1,3 +1,4 @@
+"""Feishu API"""
 import logging
 
 import httpx
@@ -8,7 +9,8 @@ logger = logging.getLogger(__name__)
 default_client = httpx.AsyncClient()
 
 
-async def get_access_token(client:httpx.AsyncClient=default_client)->str:
+async def get_access_token(client: httpx.AsyncClient = default_client) -> str:
+    """Get access token"""
     resp = await client.post(
         "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
         json={"app_id": get_settings().app_id, "app_secret": get_settings().app_secret},
@@ -16,7 +18,10 @@ async def get_access_token(client:httpx.AsyncClient=default_client)->str:
     return resp.json()["tenant_access_token"]
 
 
-async def create_timeoff_events(user_id:str,start_time:str,end_time:str,title:str,description:str)->None:
+async def create_timeoff_events(
+    user_id: str, start_time: int, end_time: int, title: str, description: str
+) -> None:
+    """Create timeoff events"""
     resp = await default_client.post(
         "https://open.feishu.cn/open-apis/calendar/v4/timeoff_events?user_id_type=user_id",
         json={
@@ -29,5 +34,4 @@ async def create_timeoff_events(user_id:str,start_time:str,end_time:str,title:st
         },
         headers={"Authorization": f"Bearer {await get_access_token()}"},
     )
-    logger.info("Create timeoff event: {}".format(resp.json()))
-
+    logger.info("Create timeoff event: %s", resp.json())

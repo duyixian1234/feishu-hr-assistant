@@ -1,3 +1,5 @@
+"""Process event data"""
+
 import logging
 
 from dateutil.parser import parse
@@ -7,9 +9,10 @@ from api import create_timeoff_events
 logger = logging.getLogger(__name__)
 
 
-async def process_event(event: dict) -> None:
-    logger.info("Processing event: {}".format(event))
-    event_type, data = parse_event(event)
+async def process_event(event: dict) -> dict:
+    """Process event data"""
+    logger.info("Processing event: %s", event)
+    event_type, data = parse_event(event)  # pylint:disable=unpacking-non-sequence
     if event_type == "leave_approvalV2":
         match data:
             case {
@@ -36,7 +39,8 @@ async def process_event(event: dict) -> None:
     return event
 
 
-def parse_event(event: dict):
+def parse_event(event: dict) -> tuple[str, dict]:
+    """Parse event data"""
     match event:
         case {
             "schema": "2.0",
@@ -45,5 +49,7 @@ def parse_event(event: dict):
             **__,
         }:
             return event_type, event
-        case {"type": type}:
-            return type, event
+        case {"type": _type}:
+            return _type, event
+        case _:
+            return "unknown", event
