@@ -9,7 +9,9 @@ from fastapi import FastAPI, Request
 from events import process_event
 
 logging.basicConfig(
-    level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s"
+    level=logging.INFO,
+    format="[%(asctime)s] [%(levelname)s] %(message)s",
+    handlers=[logging.FileHandler("./log/app.log")],
 )
 logger = logging.getLogger(__name__)
 
