@@ -45,5 +45,5 @@ def parse_event(event: dict):
             **__,
         }:
             return event_type, event
-        case {"event": {"type": type}}:
-            return type, event["event"]
+        case {"type": type}:
+            return type, event
