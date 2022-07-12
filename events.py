@@ -13,6 +13,7 @@ async def process_event(event: dict) -> dict:
     """Process event data"""
     logger.info("Processing event: %s", event)
     event_type, data = parse_event(event)  # pylint:disable=unpacking-non-sequence
+    logger.info("Event type: %s", event_type)
     if event_type == "leave_approvalV2":
         match data:
             case {
@@ -49,7 +50,9 @@ def parse_event(event: dict) -> tuple[str, dict]:
             **__,
         }:
             return event_type, event
-        case {"type": _type}:
+        case {"event": {"type": event_type, **__}, **___}:
+            return event_type, event["event"]
+        case {"type": _type, **__}:
             return _type, event
         case _:
             return "unknown", event
