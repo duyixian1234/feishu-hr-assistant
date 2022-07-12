@@ -6,6 +6,7 @@ import logging
 
 from fastapi import FastAPI, Request
 
+import storage
 from events import process_event
 
 logging.basicConfig(
@@ -14,7 +15,7 @@ logging.basicConfig(
     handlers=[logging.FileHandler("./log/app.log")],
 )
 logger = logging.getLogger(__name__)
-
+storage.init_db()
 app = FastAPI()
 
 

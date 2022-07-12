@@ -4,7 +4,8 @@ import logging
 
 from dateutil.parser import parse
 
-from api import create_timeoff_events
+import storage
+from api import create_timeoff_events, delete_timeoff_events
 
 logger = logging.getLogger(__name__)
 
@@ -23,20 +24,27 @@ async def process_event(event: dict) -> dict:
                 "leave_reason": leave_reason,
                 "leave_name": leave_name,
                 "i18n_resources": i18n_resources,
+                "instance_code": instance_code,
                 **__,
             }:
                 title = next(
                     item for item in i18n_resources if item["locale"] == "zh_cn"
                 )["texts"][leave_name]
-                await create_timeoff_events(
+                data = await create_timeoff_events(
                     user_id=user_id,
                     start_time=int(parse(start_time).timestamp()),
                     end_time=int(parse(end_time).timestamp()),
                     title=title,
                     description=leave_reason,
                 )
+                storage.new(data["data"]["timeoff_event_id"], instance_code)
             case _:
                 pass
+    if event_type == "leave_approval_revert":
+        instance_code = data["instance_code"]
+        event_id = storage.get_event_id(instance_code)
+        await delete_timeoff_events(event_id)
+
     return event
 
 

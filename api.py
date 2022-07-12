@@ -20,7 +20,7 @@ async def get_access_token(client: httpx.AsyncClient = default_client) -> str:
 
 async def create_timeoff_events(
     user_id: str, start_time: int, end_time: int, title: str, description: str
-) -> None:
+) -> dict:
     """Create timeoff events"""
     resp = await default_client.post(
         "https://open.feishu.cn/open-apis/calendar/v4/timeoff_events?user_id_type=user_id",
@@ -35,3 +35,13 @@ async def create_timeoff_events(
         headers={"Authorization": f"Bearer {await get_access_token()}"},
     )
     logger.info("Create timeoff event: %s", resp.json())
+    return resp.json()
+
+
+async def delete_timeoff_events(event_id: str) -> None:
+    """Delete timeoff events"""
+    resp = await default_client.delete(
+        f"https://open.feishu.cn/open-apis/calendar/v4/timeoff_events/{event_id}",
+        headers={"Authorization": f"Bearer {await get_access_token()}"},
+    )
+    logger.info("Delete timeoff event: %s", resp.json())
