@@ -9,6 +9,7 @@ class Settings(BaseSettings):  # pylint:disable=too-few-public-methods
 
     app_id: str
     app_secret: str
+    db_url: str
 
 
 @cache

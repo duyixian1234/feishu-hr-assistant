@@ -1,10 +1,12 @@
 """Sorage"""
 import sqlite3
 
+from config import get_settings
+
 
 def init_db() -> None:
     """Init DB"""
-    with sqlite3.connect("./data/data.db") as conn:
+    with sqlite3.connect(get_settings().db_url) as conn:
         cursor = conn.cursor()
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS data "
@@ -15,7 +17,7 @@ def init_db() -> None:
 
 def new(timeoff_event_id: str, instance_code: str) -> None:
     """ "New Data"""
-    with sqlite3.connect("./data/data.db") as conn:
+    with sqlite3.connect(get_settings().db_url) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """INSERT INTO data (timeoff_event_id, instance_code) VALUES (?, ?)""",
@@ -26,7 +28,7 @@ def new(timeoff_event_id: str, instance_code: str) -> None:
 
 def get_event_id(instance_code: str) -> str:
     """Get Event ID"""
-    with sqlite3.connect("./data/data.db") as conn:
+    with sqlite3.connect(get_settings().db_url) as conn:
         cursor = conn.cursor()
         cursor.execute(
             """SELECT timeoff_event_id FROM data WHERE instance_code = ?""",
