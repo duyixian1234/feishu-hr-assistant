@@ -1,4 +1,5 @@
 """Define Settings class"""
+
 from functools import cache
 
 from pydantic import BaseSettings

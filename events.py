@@ -40,6 +40,10 @@ async def process_event(event: dict) -> dict:
                 storage.new(data["data"]["timeoff_event_id"], instance_code)
             case _:
                 pass
+
+    if event_type in {"trip_approval", "approval.instance.trip_group_update_v4","out_approval"}:
+        logger.info("Event: %s, %s", event_type, data)
+
     if event_type == "leave_approval_revert":
         instance_code = data["instance_code"]
         event_id = storage.get_event_id(instance_code)

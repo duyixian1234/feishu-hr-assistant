@@ -1,4 +1,5 @@
 """Sorage"""
+
 import sqlite3
 
 from config import get_settings

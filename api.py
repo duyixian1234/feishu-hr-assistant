@@ -1,4 +1,5 @@
 """Feishu API"""
+
 import logging
 
 import httpx
