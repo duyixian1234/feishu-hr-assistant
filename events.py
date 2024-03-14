@@ -41,8 +41,28 @@ async def process_event(event: dict) -> dict:
             case _:
                 pass
 
-    if event_type in {"trip_approval", "approval.instance.trip_group_update_v4","out_approval"}:
-        logger.info("Event: %s, %s", event_type, data)
+    if event_type == "trip_approval":
+        match data:
+            case {
+                "employee_id": employee_id,
+                "schedules": [
+                    {
+                        "remark": remark,
+                        "trip_start_time": start_time,
+                        "trip_end_time": end_time,
+                    },
+                    *_,
+                ],
+            }:
+                await create_timeoff_events(
+                    user_id=employee_id,
+                    start_time=int(parse(start_time).timestamp()),
+                    end_time=int(parse(end_time).timestamp()),
+                    title="出差",
+                    description=remark,
+                )
+            case _:
+                pass
 
     if event_type == "leave_approval_revert":
         instance_code = data["instance_code"]
